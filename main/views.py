@@ -3,6 +3,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm, ProfileForm, ReservationForm
 from django.contrib import messages
+from django.http import JsonResponse
 from django.db.models import Q
 from .models import Pharmacy, Medicine, Stock, Reservation
 
@@ -270,3 +271,34 @@ def pharmacist_panel(request):
         'statuses': Reservation.STATUS_CHOICES,
         'pharmacy': profile.pharmacy,
     })
+
+from django.http import JsonResponse
+
+
+def api_search_medicines(request):
+    """
+    AJAX-эндпоинт для автодополнения поиска лекарств.
+    Возвращает JSON-массив до 8 совпадений.
+    Параметры: ?q=строка
+    """
+    query = request.GET.get('q', '').strip()
+
+    if len(query) < 2:
+        return JsonResponse({'results': []})
+
+    medicines = Medicine.objects.filter(
+        Q(name__icontains=query) |
+        Q(inn__name_ru__icontains=query) |
+        Q(inn__name_lat__icontains=query)
+    ).select_related('inn')[:8]
+
+    results = [{
+        'id': m.pk,
+        'name': m.name,
+        'inn': m.inn.name_ru,
+        'dosage': m.dosage or '',
+        'form': m.get_form_display(),
+        'url': f'/medicine/{m.pk}/',
+    } for m in medicines]
+
+    return JsonResponse({'results': results})

@@ -6,14 +6,24 @@
 <div class="container my-4">
     <h1 class="h3 mb-4">Поиск лекарств</h1>
 
-    <form method="get" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="q" class="form-control form-control-lg"
-                   placeholder="Введите название или МНН (например, Парацетамол)"
-                   value="{{ query }}">
-            <button class="btn btn-primary btn-lg" type="submit">Найти</button>
+    <form method="get" class="mb-4" autocomplete="off">
+        <div class="position-relative" id="search-wrapper">
+            <div class="input-group">
+                <input type="text" name="q" id="search-input"
+                       class="form-control form-control-lg"
+                       placeholder="Введите название или МНН (например, Парацетамол)"
+                       value="{{ query }}"
+                       autocomplete="off">
+                <button class="btn btn-primary btn-lg" type="submit">Найти</button>
+            </div>
+
+            <!-- Выпадающий список автодополнения -->
+            <div id="autocomplete-list" class="autocomplete-list d-none"></div>
         </div>
-        <small class="text-muted">Поиск работает по торговому названию и международному непатентованному наименованию (МНН).</small>
+        <small class="text-muted">
+            Поиск работает по торговому названию и международному непатентованному
+            наименованию (МНН). Начните вводить название — появятся подсказки.
+        </small>
     </form>
 
     {% if query %}
@@ -53,4 +63,137 @@
         {% endif %}
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    const input = document.getElementById('search-input');
+    const list = document.getElementById('autocomplete-list');
+    const wrapper = document.getElementById('search-wrapper');
+
+    if (!input || !list) return;
+
+    let debounceTimer = null;
+    let currentController = null;
+
+    // Дебаунс — не спамим сервер на каждую букву
+    function debounce(func, delay) {
+        return function(...args) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // Экранирование HTML (защита от XSS)
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
+    }
+
+    // Подсветка совпадения
+    function highlight(text, query) {
+        if (!query) return escapeHtml(text);
+        const escaped = escapeHtml(text);
+        const regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        return escaped.replace(regex, '<mark>$1</mark>');
+    }
+
+    // Отрисовка списка
+    function renderResults(results, query) {
+        if (!results.length) {
+            list.classList.add('d-none');
+            list.innerHTML = '';
+            return;
+        }
+
+        list.innerHTML = results.map(item => `
+            <div class="autocomplete-item" data-url="${item.url}">
+                <div class="autocomplete-name">${highlight(item.name, query)}</div>
+                <div class="autocomplete-meta">
+                    <span class="text-muted">${escapeHtml(item.inn)}</span>
+                    ${item.dosage ? ' · ' + escapeHtml(item.dosage) : ''}
+                    ${item.form ? ' · ' + escapeHtml(item.form) : ''}
+                </div>
+            </div>
+        `).join('');
+
+        list.classList.remove('d-none');
+
+        // Обработка кликов
+        list.querySelectorAll('.autocomplete-item').forEach(el => {
+            el.addEventListener('click', () => {
+                window.location.href = el.dataset.url;
+            });
+        });
+    }
+
+    // Запрос к API
+    async function fetchResults(query) {
+        if (query.length < 2) {
+            list.classList.add('d-none');
+            return;
+        }
+
+        // Отменяем предыдущий запрос, если ещё не завершился
+        if (currentController) currentController.abort();
+        currentController = new AbortController();
+
+        try {
+            const response = await fetch(`/api/search/?q=${encodeURIComponent(query)}`, {
+                signal: currentController.signal,
+            });
+            const data = await response.json();
+            renderResults(data.results, query);
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('Autocomplete error:', err);
+            }
+        }
+    }
+
+    // Слушаем ввод
+    input.addEventListener('input', debounce(function() {
+        fetchResults(this.value.trim());
+    }, 250));
+
+    // Скрываем список при клике вне
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            list.classList.add('d-none');
+        }
+    });
+
+    // Показываем список при фокусе (если уже что-то введено)
+    input.addEventListener('focus', () => {
+        if (input.value.trim().length >= 2) {
+            fetchResults(input.value.trim());
+        }
+    });
+
+    // Навигация стрелками (опционально)
+    let activeIndex = -1;
+    input.addEventListener('keydown', (e) => {
+        const items = list.querySelectorAll('.autocomplete-item');
+        if (!items.length || list.classList.contains('d-none')) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = Math.min(activeIndex + 1, items.length - 1);
+            items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, -1);
+            items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+        } else if (e.key === 'Enter' && activeIndex >= 0) {
+            e.preventDefault();
+            items[activeIndex].click();
+        } else if (e.key === 'Escape') {
+            list.classList.add('d-none');
+            activeIndex = -1;
+        }
+    });
+})();
+</script>
 {% endblock %}

@@ -22,4 +22,7 @@ urlpatterns = [
 
     # Панель фармацевта
     path('pharmacist/', views.pharmacist_panel, name='pharmacist_panel'),
+
+    # Выпадающий список с автозаполнением для поиска лекарств
+    path('api/search/', views.api_search_medicines, name='api_search_medicines'),
 ]
