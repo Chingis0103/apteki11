@@ -39,15 +39,47 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:search' %}">Поиск лекарств</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/">Админка</a>
-                    </li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                👤 {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'main:profile' %}">Личный кабинет</a></li>
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="/admin/">Админка</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'main:logout' %}">Выйти</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:login' %}">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:register' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
 
     <!-- Контент -->
+
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
     <main class="flex-grow-1">
         {% block content %}{% endblock %}
     </main>

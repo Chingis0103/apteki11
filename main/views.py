@@ -1,4 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from .forms import RegisterForm, LoginForm, ProfileForm
+from django.contrib import messages
 from django.db.models import Q
 from .models import Pharmacy, Medicine, Stock
 
@@ -64,4 +68,68 @@ def medicine_detail(request, pk):
         'medicine': medicine,
         'analogs': analogs,
         'stocks': stocks,
+    })
+
+
+def register(request):
+    """Регистрация нового пользователя."""
+    if request.user.is_authenticated:
+        return redirect('main:index')
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            messages.success(request, f'Добро пожаловать, {user.username}!')
+            return redirect('main:index')
+    else:
+        form = RegisterForm()
+
+    return render(request, 'main/register.html', {'form': form})
+
+
+def login_view(request):
+    """Вход в систему."""
+    if request.user.is_authenticated:
+        return redirect('main:index')
+
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            auth_login(request, form.get_user())
+            messages.success(request, 'Вы вошли в систему.')
+            # Редирект туда, откуда пришёл (если есть ?next=)
+            next_url = request.GET.get('next') or 'main:index'
+            return redirect(next_url)
+    else:
+        form = LoginForm(request)
+
+    return render(request, 'main/login.html', {'form': form})
+
+
+def logout_view(request):
+    """Выход из системы."""
+    auth_logout(request)
+    messages.info(request, 'Вы вышли из системы.')
+    return redirect('main:index')
+
+
+@login_required
+def profile(request):
+    """Личный кабинет."""
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Профиль обновлён.')
+            return redirect('main:profile')
+    else:
+        form = ProfileForm(instance=request.user.profile)
+
+    reservations = request.user.reservations.all()[:10]
+
+    return render(request, 'main/profile.html', {
+        'form': form,
+        'reservations': reservations,
     })
