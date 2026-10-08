@@ -1,0 +1,88 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Карта аптек — Аптеки 11{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3">Карта аптек Республики Коми</h1>
+            <p class="text-muted">Найдите ближайшую аптеку и проверьте наличие лекарств</p>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title display-6">{{ stats.pharmacies }}</h5>
+                    <p class="card-text text-muted mb-0">Аптек</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title display-6">{{ stats.medicines }}</h5>
+                    <p class="card-text text-muted mb-0">Лекарств</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title display-6">{{ stats.inns }}</h5>
+                    <p class="card-text text-muted mb-0">МНН в справочнике</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карта -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div id="map" style="height: 500px; border-radius: 0.375rem;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Данные аптек в JSON для JS -->
+{{ pharmacies_data|json_script:"pharmacies-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Инициализация карты MapLibre
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://tiles.openfreemap.org/styles/liberty', // Бесплатный стиль, без ключа
+        center: [50.8364, 61.6688], // Долгота, Широта (Сыктывкар)
+        zoom: 11
+    });
+
+    // Добавляем контролы (зум и масштаб)
+    map.addControl(new maplibregl.NavigationControl());
+    map.addControl(new maplibregl.ScaleControl());
+
+    // Загружаем аптеки из JSON
+    const pharmacies = JSON.parse(document.getElementById('pharmacies-data').textContent);
+
+    // Добавляем метки на карту
+    pharmacies.forEach(function(p) {
+        // Создаем HTML для попапа
+        const popupHtml = `
+            <strong>${p.name}</strong><br>
+            ${p.address}<br>
+            ${p.phone ? '📞 ' + p.phone + '<br>' : ''}
+            ${p.is_24h ? '<span class="badge bg-success">Круглосуточно</span>' : ''}
+        `;
+
+        // Создаем маркер и попап
+        new maplibregl.Marker()
+            .setLngLat([p.longitude, p.latitude]) // Важно: сначала долгота, потом широта
+            .setPopup(new maplibregl.Popup().setHTML(popupHtml))
+            .addTo(map);
+    });
+</script>
+{% endblock %}

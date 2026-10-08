@@ -1,0 +1,56 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Поиск лекарств — Аптеки 11{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="h3 mb-4">Поиск лекарств</h1>
+
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control form-control-lg"
+                   placeholder="Введите название или МНН (например, Парацетамол)"
+                   value="{{ query }}">
+            <button class="btn btn-primary btn-lg" type="submit">Найти</button>
+        </div>
+        <small class="text-muted">Поиск работает по торговому названию и международному непатентованному наименованию (МНН).</small>
+    </form>
+
+    {% if query %}
+        {% if medicines %}
+            <p class="text-muted">Найдено: <strong>{{ medicines|length }}</strong></p>
+            <div class="row g-3">
+                {% for medicine in medicines %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ medicine.name }}</h5>
+                                <p class="card-text mb-1">
+                                    <small class="text-muted">МНН:</small> {{ medicine.inn.name_ru }}
+                                </p>
+                                <p class="card-text mb-1">
+                                    <small class="text-muted">Форма:</small> {{ medicine.get_form_display }}
+                                    {% if medicine.dosage %} · {{ medicine.dosage }}{% endif %}
+                                </p>
+                                {% if medicine.is_prescription %}
+                                    <span class="badge bg-warning text-dark">По рецепту</span>
+                                {% else %}
+                                    <span class="badge bg-info">Без рецепта</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer bg-white">
+                                <a href="{% url 'main:medicine_detail' medicine.pk %}"
+                                   class="btn btn-sm btn-outline-primary">Подробнее и наличие</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                По запросу «{{ query }}» ничего не найдено. Попробуйте другое название или МНН.
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

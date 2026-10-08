@@ -1,0 +1,36 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Аптеки — Аптеки 11{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="h3 mb-4">Аптеки</h1>
+
+    {% if pharmacies %}
+        <div class="row g-3">
+            {% for pharmacy in pharmacies %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ pharmacy.name }}
+                                {% if pharmacy.is_24h %}
+                                    <span class="badge bg-success">24/7</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text text-muted mb-2">📍 {{ pharmacy.address }}</p>
+                            {% if pharmacy.phone %}
+                                <p class="card-text mb-2">📞 {{ pharmacy.phone }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Пока нет ни одной аптеки. Добавьте их через <a href="/admin/">админку</a>.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
