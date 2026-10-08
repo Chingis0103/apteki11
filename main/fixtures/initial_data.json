@@ -1,0 +1,793 @@
+[
+  {
+    "model": "main.inn",
+    "pk": 1,
+    "fields": {
+      "name_ru": "Парацетамол",
+      "name_lat": "Paracetamolum",
+      "atc_code": "N02BE01",
+      "description": "Анальгетик-антипиретик"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 2,
+    "fields": {
+      "name_ru": "Ибупрофен",
+      "name_lat": "Ibuprofenum",
+      "atc_code": "M01AE01",
+      "description": "НПВС, анальгетик-антипиретик"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 3,
+    "fields": {
+      "name_ru": "Ацетилсалициловая кислота",
+      "name_lat": "Acidum acetylsalicylicum",
+      "atc_code": "B01AC06",
+      "description": "Антиагрегант, НПВС"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 4,
+    "fields": {
+      "name_ru": "Амоксициллин",
+      "name_lat": "Amoxicillinum",
+      "atc_code": "J01CA04",
+      "description": "Антибиотик, пенициллин"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 5,
+    "fields": {
+      "name_ru": "Цетиризин",
+      "name_lat": "Cetirizinum",
+      "atc_code": "R06AE07",
+      "description": "Антигистаминное средство"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 6,
+    "fields": {
+      "name_ru": "Лоратадин",
+      "name_lat": "Loratadinum",
+      "atc_code": "R06AX13",
+      "description": "Антигистаминное средство"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 7,
+    "fields": {
+      "name_ru": "Омепразол",
+      "name_lat": "Omeprazolum",
+      "atc_code": "A02BC01",
+      "description": "Ингибитор протонной помпы"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 8,
+    "fields": {
+      "name_ru": "Нимесулид",
+      "name_lat": "Nimesulidum",
+      "atc_code": "M01AX17",
+      "description": "НПВС"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 9,
+    "fields": {
+      "name_ru": "Дротаверин",
+      "name_lat": "Drotaverinum",
+      "atc_code": "A03AD02",
+      "description": "Спазмолитик"
+    }
+  },
+  {
+    "model": "main.inn",
+    "pk": 10,
+    "fields": {
+      "name_ru": "Аскорбиновая кислота",
+      "name_lat": "Acidum ascorbinicum",
+      "atc_code": "A11GA01",
+      "description": "Витамин C"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 1,
+    "fields": {
+      "name": "Будь Здоров!",
+      "address": "г. Сыктывкар, ул. Мира, 11",
+      "latitude": 61.801815,
+      "longitude": 50.748977,
+      "phone": "+7 (8212) 62-83-31",
+      "is_24h": true,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 2,
+    "fields": {
+      "name": "Ригла",
+      "address": "г. Сыктывкар, Октябрьский просп., 141",
+      "latitude": 61.698567,
+      "longitude": 50.801604,
+      "phone": "+7 (8212) 24-43-31",
+      "is_24h": false,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 3,
+    "fields": {
+      "name": "Максимум",
+      "address": "г. Сыктывкар, ул. Интернациональная, 157",
+      "latitude": 61.666845,
+      "longitude": 50.833656,
+      "phone": "+7 (8212) 57-03-39",
+      "is_24h": false,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 4,
+    "fields": {
+      "name": "Планета здоровья",
+      "address": "г. Сыктывкар, ул. Мира, 13",
+      "latitude": 61.801021,
+      "longitude": 50.74993,
+      "phone": "+7 (8212) 40-00-44",
+      "is_24h": false,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 5,
+    "fields": {
+      "name": "Аптека от склада",
+      "address": "г. Сыктывкар, просп. Бумажников, 53Д",
+      "latitude": 61.784686,
+      "longitude": 50.747242,
+      "phone": "+7 (8212) 63-70-24",
+      "is_24h": false,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 6,
+    "fields": {
+      "name": "Государственные аптеки РК",
+      "address": "г. Сыктывкар, ул. Лесозаводская, 15",
+      "latitude": 61.65682,
+      "longitude": 50.88188,
+      "phone": "+7 (8212) 22-72-48",
+      "is_24h": false,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 7,
+    "fields": {
+      "name": "Планета здоровья",
+      "address": "г. Сыктывкар, ул. Карла Маркса, 183",
+      "latitude": 61.676887,
+      "longitude": 50.820165,
+      "phone": "+7 (8212) 40-00-44",
+      "is_24h": true,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 8,
+    "fields": {
+      "name": "Планета здоровья",
+      "address": "г. Сыктывкар, Покровский бул., 9",
+      "latitude": 61.695845,
+      "longitude": 50.809858,
+      "phone": "+7 (8212) 40-00-44",
+      "is_24h": true,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 9,
+    "fields": {
+      "name": "Аптека №1 (ГУП РК)",
+      "address": "г. Сыктывкар, ул. Ленина, 49",
+      "latitude": 61.670151,
+      "longitude": 50.834835,
+      "phone": "+7 (8212) 29-39-79",
+      "is_24h": true,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.pharmacy",
+    "pk": 10,
+    "fields": {
+      "name": "Аптека 38 Плюс",
+      "address": "г. Сыктывкар, ул. Ленина, 131а",
+      "latitude": 61.664654,
+      "longitude": 50.843044,
+      "phone": "+7 (8212) 40-01-40",
+      "is_24h": true,
+      "is_active": true,
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 1,
+    "fields": {
+      "name": "Панадол",
+      "inn": 1,
+      "form": "tablets",
+      "dosage": "500 мг",
+      "is_prescription": false,
+      "description": "Обезболивающее и жаропонижающее средство",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 2,
+    "fields": {
+      "name": "Эффералган",
+      "inn": 1,
+      "form": "tablets",
+      "dosage": "500 мг",
+      "is_prescription": false,
+      "description": "Жаропонижающее и обезболивающее",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 3,
+    "fields": {
+      "name": "Цефекон Д",
+      "inn": 1,
+      "form": "capsules",
+      "dosage": "500 мг",
+      "is_prescription": false,
+      "description": "Жаропонижающее для детей и взрослых",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 4,
+    "fields": {
+      "name": "Нурофен",
+      "inn": 2,
+      "form": "tablets",
+      "dosage": "200 мг",
+      "is_prescription": false,
+      "description": "Обезболивающее и противовоспалительное",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 5,
+    "fields": {
+      "name": "Ибуфен",
+      "inn": 2,
+      "form": "capsules",
+      "dosage": "200 мг",
+      "is_prescription": false,
+      "description": "НПВС, обезболивающее",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 6,
+    "fields": {
+      "name": "Аспирин",
+      "inn": 3,
+      "form": "tablets",
+      "dosage": "100 мг",
+      "is_prescription": false,
+      "description": "Антиагрегант, разжижает кровь",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 7,
+    "fields": {
+      "name": "Тромбо АСС",
+      "inn": 3,
+      "form": "tablets",
+      "dosage": "100 мг",
+      "is_prescription": false,
+      "description": "Профилактика тромбозов",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 8,
+    "fields": {
+      "name": "Амоксициллин",
+      "inn": 4,
+      "form": "capsules",
+      "dosage": "500 мг",
+      "is_prescription": true,
+      "description": "Антибиотик широкого спектра",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 9,
+    "fields": {
+      "name": "Флемоксин Солютаб",
+      "inn": 4,
+      "form": "tablets",
+      "dosage": "500 мг",
+      "is_prescription": true,
+      "description": "Антибиотик, растворяется в воде",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 10,
+    "fields": {
+      "name": "Зиртек",
+      "inn": 5,
+      "form": "tablets",
+      "dosage": "10 мг",
+      "is_prescription": false,
+      "description": "Антигистаминное, от аллергии",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 11,
+    "fields": {
+      "name": "Зодак",
+      "inn": 5,
+      "form": "tablets",
+      "dosage": "10 мг",
+      "is_prescription": false,
+      "description": "Антигистаминное средство",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 12,
+    "fields": {
+      "name": "Кларитин",
+      "inn": 6,
+      "form": "tablets",
+      "dosage": "10 мг",
+      "is_prescription": false,
+      "description": "Антигистаминное, не вызывает сонливости",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 13,
+    "fields": {
+      "name": "Омез",
+      "inn": 7,
+      "form": "capsules",
+      "dosage": "20 мг",
+      "is_prescription": true,
+      "description": "От изжоги, язвы, рефлюкса",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 14,
+    "fields": {
+      "name": "Гастрозол",
+      "inn": 7,
+      "form": "capsules",
+      "dosage": "20 мг",
+      "is_prescription": true,
+      "description": "Ингибитор протонной помпы",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 15,
+    "fields": {
+      "name": "Найз",
+      "inn": 8,
+      "form": "tablets",
+      "dosage": "100 мг",
+      "is_prescription": false,
+      "description": "НПВС, при боли и воспалении",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 16,
+    "fields": {
+      "name": "Но-шпа",
+      "inn": 9,
+      "form": "tablets",
+      "dosage": "40 мг",
+      "is_prescription": false,
+      "description": "Спазмолитик при болях в животе",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.medicine",
+    "pk": 17,
+    "fields": {
+      "name": "Асвитол",
+      "inn": 10,
+      "form": "tablets",
+      "dosage": "100 мг",
+      "is_prescription": false,
+      "description": "Витамин C для укрепления иммунитета",
+      "created_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 1,
+    "fields": {
+      "pharmacy": 1,
+      "medicine": 1,
+      "price": "120.00",
+      "quantity": 25,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 2,
+    "fields": {
+      "pharmacy": 1,
+      "medicine": 2,
+      "price": "180.00",
+      "quantity": 15,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 3,
+    "fields": {
+      "pharmacy": 1,
+      "medicine": 4,
+      "price": "250.00",
+      "quantity": 10,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 4,
+    "fields": {
+      "pharmacy": 1,
+      "medicine": 10,
+      "price": "320.00",
+      "quantity": 8,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 5,
+    "fields": {
+      "pharmacy": 2,
+      "medicine": 1,
+      "price": "135.00",
+      "quantity": 20,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 6,
+    "fields": {
+      "pharmacy": 2,
+      "medicine": 6,
+      "price": "190.00",
+      "quantity": 30,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 7,
+    "fields": {
+      "pharmacy": 2,
+      "medicine": 12,
+      "price": "280.00",
+      "quantity": 12,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 8,
+    "fields": {
+      "pharmacy": 3,
+      "medicine": 2,
+      "price": "175.00",
+      "quantity": 18,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 9,
+    "fields": {
+      "pharmacy": 3,
+      "medicine": 8,
+      "price": "420.00",
+      "quantity": 6,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 10,
+    "fields": {
+      "pharmacy": 3,
+      "medicine": 15,
+      "price": "310.00",
+      "quantity": 10,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 11,
+    "fields": {
+      "pharmacy": 4,
+      "medicine": 1,
+      "price": "125.00",
+      "quantity": 22,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 12,
+    "fields": {
+      "pharmacy": 4,
+      "medicine": 5,
+      "price": "230.00",
+      "quantity": 14,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 13,
+    "fields": {
+      "pharmacy": 4,
+      "medicine": 16,
+      "price": "160.00",
+      "quantity": 20,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 14,
+    "fields": {
+      "pharmacy": 5,
+      "medicine": 3,
+      "price": "110.00",
+      "quantity": 30,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 15,
+    "fields": {
+      "pharmacy": 5,
+      "medicine": 11,
+      "price": "250.00",
+      "quantity": 10,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 16,
+    "fields": {
+      "pharmacy": 5,
+      "medicine": 17,
+      "price": "90.00",
+      "quantity": 40,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 17,
+    "fields": {
+      "pharmacy": 6,
+      "medicine": 1,
+      "price": "105.00",
+      "quantity": 35,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 18,
+    "fields": {
+      "pharmacy": 6,
+      "medicine": 7,
+      "price": "145.00",
+      "quantity": 25,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 19,
+    "fields": {
+      "pharmacy": 6,
+      "medicine": 14,
+      "price": "350.00",
+      "quantity": 5,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 20,
+    "fields": {
+      "pharmacy": 7,
+      "medicine": 2,
+      "price": "170.00",
+      "quantity": 20,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 21,
+    "fields": {
+      "pharmacy": 7,
+      "medicine": 4,
+      "price": "245.00",
+      "quantity": 12,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 22,
+    "fields": {
+      "pharmacy": 7,
+      "medicine": 13,
+      "price": "360.00",
+      "quantity": 8,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 23,
+    "fields": {
+      "pharmacy": 8,
+      "medicine": 1,
+      "price": "130.00",
+      "quantity": 28,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 24,
+    "fields": {
+      "pharmacy": 8,
+      "medicine": 10,
+      "price": "300.00",
+      "quantity": 15,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 25,
+    "fields": {
+      "pharmacy": 8,
+      "medicine": 12,
+      "price": "275.00",
+      "quantity": 10,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 26,
+    "fields": {
+      "pharmacy": 9,
+      "medicine": 2,
+      "price": "165.00",
+      "quantity": 25,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 27,
+    "fields": {
+      "pharmacy": 9,
+      "medicine": 6,
+      "price": "180.00",
+      "quantity": 35,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 28,
+    "fields": {
+      "pharmacy": 9,
+      "medicine": 16,
+      "price": "155.00",
+      "quantity": 22,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 29,
+    "fields": {
+      "pharmacy": 10,
+      "medicine": 1,
+      "price": "115.00",
+      "quantity": 30,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  },
+  {
+    "model": "main.stock",
+    "pk": 30,
+    "fields": {
+      "pharmacy": 10,
+      "medicine": 9,
+      "price": "450.00",
+      "quantity": 7,
+      "updated_at": "2026-10-08T12:00:00Z"
+    }
+  }
+]
