@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Отмена брони — Аптеки 11{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h4 mb-3">Отменить бронь #{{ reservation.pk }}?</h1>
+
+                    <p class="mb-3">
+                        <strong>{{ reservation.stock.medicine.name }}</strong>
+                        в аптеке «{{ reservation.stock.pharmacy.name }}»<br>
+                        Количество: {{ reservation.quantity }} шт.<br>
+                        Статус: {{ reservation.get_status_display }}
+                    </p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-danger">Да, отменить</button>
+                            <a href="{% url 'main:my_reservations' %}"
+                               class="btn btn-outline-secondary">Нет, вернуться</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

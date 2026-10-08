@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm, LoginForm, ProfileForm
+from .forms import RegisterForm, LoginForm, ProfileForm, ReservationForm
 from django.contrib import messages
 from django.db.models import Q
-from .models import Pharmacy, Medicine, Stock
+from .models import Pharmacy, Medicine, Stock, Reservation
 
 
 def index(request):
@@ -132,4 +132,141 @@ def profile(request):
     return render(request, 'main/profile.html', {
         'form': form,
         'reservations': reservations,
+    })
+
+
+from django.utils import timezone
+from .forms import ReservationForm
+
+
+# Максимум активных броней у одного пользователя
+MAX_ACTIVE_RESERVATIONS = 5
+
+
+@login_required
+def reserve(request, stock_id):
+    """Создание брони на конкретную позицию наличия."""
+    stock = get_object_or_404(
+        Stock.objects.select_related('pharmacy', 'medicine'),
+        pk=stock_id
+    )
+
+    # Проверка: есть ли в наличии
+    if stock.quantity <= 0:
+        messages.error(request, 'Этого лекарства нет в наличии.')
+        return redirect('main:medicine_detail', pk=stock.medicine.pk)
+
+    # Проверка: не превышен ли лимит активных броней
+    active_count = request.user.reservations.filter(
+        status__in=['new', 'confirmed']
+    ).count()
+    if active_count >= MAX_ACTIVE_RESERVATIONS:
+        messages.error(
+            request,
+            f'У вас уже {MAX_ACTIVE_RESERVATIONS} активных броней. '
+            f'Дождитесь их обработки или отмените старые.'
+        )
+        return redirect('main:profile')
+
+    if request.method == 'POST':
+        form = ReservationForm(request.POST, stock=stock)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.user = request.user
+            reservation.stock = stock
+            reservation.status = 'new'
+            reservation.save()
+            messages.success(
+                request,
+                f'Заявка #{reservation.pk} создана. '
+                f'Аптека «{stock.pharmacy.name}» свяжется с вами.'
+            )
+            return redirect('main:profile')
+    else:
+        form = ReservationForm(stock=stock)
+
+    return render(request, 'main/reserve_form.html', {
+        'form': form,
+        'stock': stock,
+    })
+
+
+@login_required
+def my_reservations(request):
+    """Мои бронирования с фильтром по статусу."""
+    status_filter = request.GET.get('status', '')
+    reservations = request.user.reservations.select_related(
+        'stock__medicine', 'stock__pharmacy'
+    )
+
+    if status_filter and status_filter in dict(Reservation.STATUS_CHOICES):
+        reservations = reservations.filter(status=status_filter)
+
+    return render(request, 'main/my_reservations.html', {
+        'reservations': reservations,
+        'status_filter': status_filter,
+        'statuses': Reservation.STATUS_CHOICES,
+    })
+
+
+@login_required
+def cancel_reservation(request, pk):
+    """Отмена своей брони (только new или confirmed)."""
+    reservation = get_object_or_404(Reservation, pk=pk, user=request.user)
+
+    if reservation.status not in ('new', 'confirmed'):
+        messages.error(request, 'Эту бронь нельзя отменить.')
+        return redirect('main:my_reservations')
+
+    if request.method == 'POST':
+        reservation.status = 'cancelled'
+        reservation.save()
+        messages.info(request, f'Бронь #{reservation.pk} отменена.')
+        return redirect('main:my_reservations')
+
+    return render(request, 'main/cancel_reservation.html', {
+        'reservation': reservation,
+    })
+
+
+@login_required
+def pharmacist_panel(request):
+    """Панель фармацевта: заявки в его аптеке."""
+    profile = request.user.profile
+
+    if profile.role != 'pharmacist' or not profile.pharmacy:
+        messages.error(request, 'Доступ только для фармацевтов с привязанной аптекой.')
+        return redirect('main:index')
+
+    # Фильтр по статусу
+    status_filter = request.GET.get('status', '')
+    reservations = Reservation.objects.filter(
+        stock__pharmacy=profile.pharmacy
+    ).select_related('user', 'stock__medicine').order_by('-created_at')
+
+    if status_filter and status_filter in dict(Reservation.STATUS_CHOICES):
+        reservations = reservations.filter(status=status_filter)
+
+    # Обработка смены статуса
+    if request.method == 'POST':
+        reservation_id = request.POST.get('reservation_id')
+        new_status = request.POST.get('new_status')
+        reservation = get_object_or_404(
+            Reservation, pk=reservation_id, stock__pharmacy=profile.pharmacy
+        )
+        if new_status in dict(Reservation.STATUS_CHOICES):
+            reservation.status = new_status
+            reservation.save()
+            messages.success(
+                request,
+                f'Статус заявки #{reservation.pk} изменён на '
+                f'«{reservation.get_status_display()}».'
+            )
+        return redirect('main:pharmacist_panel')
+
+    return render(request, 'main/pharmacist_panel.html', {
+        'reservations': reservations,
+        'status_filter': status_filter,
+        'statuses': Reservation.STATUS_CHOICES,
+        'pharmacy': profile.pharmacy,
     })

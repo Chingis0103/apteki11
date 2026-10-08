@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Reservation
 
 
 class RegisterForm(UserCreationForm):
@@ -99,3 +99,44 @@ class ProfileForm(forms.ModelForm):
         labels = {
             'phone': 'Телефон',
         }
+
+
+class ReservationForm(forms.ModelForm):
+    """Форма бронирования лекарства."""
+    class Meta:
+        model = Reservation
+        fields = ('quantity', 'comment')
+        widgets = {
+            'quantity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': 1,
+                'value': 1,
+            }),
+            'comment': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Например: «Буду после 18:00» или «Нужен срочно»',
+            }),
+        }
+        labels = {
+            'quantity': 'Количество',
+            'comment': 'Комментарий (необязательно)',
+        }
+
+    def __init__(self, *args, stock=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.stock = stock
+        if stock:
+            # Ограничиваем количество тем, что есть в наличии
+            self.fields['quantity'].widget.attrs['max'] = stock.quantity
+            self.fields['quantity'].help_text = f'В наличии: {stock.quantity} шт.'
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data['quantity']
+        if self.stock and quantity > self.stock.quantity:
+            raise forms.ValidationError(
+                f'В аптеке только {self.stock.quantity} шт. Уменьшите количество.'
+            )
+        if quantity < 1:
+            raise forms.ValidationError('Количество должно быть не менее 1.')
+        return quantity

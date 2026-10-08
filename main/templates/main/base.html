@@ -46,6 +46,10 @@
                                 👤 {{ user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'main:my_reservations' %}">Мои бронирования</a></li>
+                                {% if user.profile.role == 'pharmacist' %}
+                                    <li><a class="dropdown-item" href="{% url 'main:pharmacist_panel' %}">Панель фармацевта</a></li>
+                                {% endif %}
                                 <li><a class="dropdown-item" href="{% url 'main:profile' %}">Личный кабинет</a></li>
                                 {% if user.is_staff %}
                                     <li><a class="dropdown-item" href="/admin/">Админка</a></li>

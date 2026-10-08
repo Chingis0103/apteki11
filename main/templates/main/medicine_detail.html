@@ -66,7 +66,13 @@
                                         </td>
                                         <td><small>{{ stock.pharmacy.address }}</small></td>
                                         <td class="text-end"><strong>{{ stock.price }} ₽</strong></td>
-                                        <td class="text-end">{{ stock.quantity }}</td>
+                                        <td class="text-end">
+                                            {{ stock.quantity }}
+                                            {% if user.is_authenticated %}
+                                                <a href="{% url 'main:reserve' stock.pk %}"
+                                                    class="btn btn-sm btn-primary ms-2">Забронировать</a>
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -103,6 +109,13 @@
                     {% endif %}
                 </div>
             </div>
+            {% if not user.is_authenticated %}
+                <div class="alert alert-info small mt-3 mb-0">
+                    <a href="{% url 'main:login' %}">Войдите</a> или
+                    <a href="{% url 'main:register' %}">зарегистрируйтесь</a>,
+                    чтобы забронировать лекарство.
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

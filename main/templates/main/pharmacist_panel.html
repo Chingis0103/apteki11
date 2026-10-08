@@ -1,0 +1,84 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Панель фармацевта — Аптеки 11{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="mb-4">
+        <h1 class="h3 mb-0">Панель фармацевта</h1>
+        <p class="text-muted mb-0">
+            Аптека: <strong>{{ pharmacy.name }}</strong> · {{ pharmacy.address }}
+        </p>
+    </div>
+
+    <!-- Фильтр -->
+    <div class="mb-3">
+        <a href="{% url 'main:pharmacist_panel' %}"
+           class="btn btn-sm {% if not status_filter %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            Все
+        </a>
+        {% for code, name in statuses %}
+            <a href="?status={{ code }}"
+               class="btn btn-sm {% if status_filter == code %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if reservations %}
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Житель</th>
+                            <th>Лекарство</th>
+                            <th class="text-center">Кол-во</th>
+                            <th>Комментарий</th>
+                            <th>Дата</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in reservations %}
+                            <tr>
+                                <td>{{ r.pk }}</td>
+                                <td>
+                                    {{ r.user.username }}
+                                    {% if r.user.profile.phone %}
+                                        <br><small class="text-muted">{{ r.user.profile.phone }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ r.stock.medicine.name }}</td>
+                                <td class="text-center">{{ r.quantity }}</td>
+                                <td><small>{{ r.comment|default:"—" }}</small></td>
+                                <td><small>{{ r.created_at|date:"d.m.Y H:i" }}</small></td>
+                                <td>
+                                    <form method="post" class="d-flex gap-1">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="reservation_id" value="{{ r.pk }}">
+                                        <select name="new_status" class="form-select form-select-sm" style="width: auto;">
+                                            {% for code, name in statuses %}
+                                                <option value="{{ code }}"
+                                                    {% if r.status == code %}selected{% endif %}>
+                                                    {{ name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary">OK</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Нет заявок с таким статусом.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
