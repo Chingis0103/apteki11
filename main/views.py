@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
 from .models import Pharmacy, Medicine, Stock, Reservation
+from django.db.models.functions import Lower
 
 
 def index(request):
@@ -38,14 +39,18 @@ def pharmacy_list(request):
 
 
 def search(request):
-    """Поиск лекарств по торговому названию или МНН."""
+    """Поиск лекарств по торговому названию или МНН (регистронезависимо)."""
     query = request.GET.get('q', '').strip()
     medicines = Medicine.objects.none()
 
     if query:
-        medicines = Medicine.objects.filter(
-            Q(name__icontains=query) |
-            Q(inn__name_ru__icontains=query) |
+        q_lower = query.lower()
+        medicines = Medicine.objects.annotate(
+            name_lower=Lower('name'),
+            inn_lower=Lower('inn__name_ru'),
+        ).filter(
+            Q(name_lower__contains=q_lower) |
+            Q(inn_lower__contains=q_lower) |
             Q(inn__name_lat__icontains=query)
         ).select_related('inn').distinct()
 
@@ -286,9 +291,13 @@ def api_search_medicines(request):
     if len(query) < 2:
         return JsonResponse({'results': []})
 
-    medicines = Medicine.objects.filter(
-        Q(name__icontains=query) |
-        Q(inn__name_ru__icontains=query) |
+    q_lower = query.lower()
+    medicines = Medicine.objects.annotate(
+        name_lower=Lower('name'),
+        inn_lower=Lower('inn__name_ru'),
+    ).filter(
+        Q(name_lower__contains=q_lower) |
+        Q(inn_lower__contains=q_lower) |
         Q(inn__name_lat__icontains=query)
     ).select_related('inn')[:8]
 
