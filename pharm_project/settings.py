@@ -3,6 +3,7 @@ Django settings for pharm_project.
 Проект: «Аптеки 11» — карта наличия лекарств в аптеках Республики Коми.
 """
 
+import os
 from pathlib import Path
 from decouple import config, Csv
 
@@ -13,6 +14,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+
+# Домен PythonAnywhere (устанавливается автоматически на сервере)
+PA_USERNAME = os.environ.get('PYTHONANYWHERE_USERNAME')
+if PA_USERNAME:
+    ALLOWED_HOSTS.append(f'{PA_USERNAME}.pythonanywhere.com')
+    CSRF_TRUSTED_ORIGINS = [f'https://{PA_USERNAME}.pythonanywhere.com']
 
 # --- Приложения ---
 INSTALLED_APPS = [
@@ -29,6 +36,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,17 +64,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pharm_project.wsgi.application'
 
-# --- База данных PostgreSQL ---
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='127.0.0.1'),
-        'PORT': config('DB_PORT', default='5432'),
+# --- База данных: PostgreSQL локально, SQLite на PythonAnywhere ---
+if os.environ.get('PYTHONANYWHERE_DOMAIN'):
+    # На PythonAnywhere — SQLite (PostgreSQL платный)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    # Локально — PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST', default='127.0.0.1'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
 
 # --- Валидация паролей ---
 AUTH_PASSWORD_VALIDATORS = [
@@ -89,6 +107,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# WhiteNoise — сжатие и кэширование статики
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- Прочее ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
