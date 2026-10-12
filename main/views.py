@@ -302,3 +302,29 @@ def api_search_medicines(request):
     } for m in medicines]
 
     return JsonResponse({'results': results})
+
+def pharmacy_detail(request, pk):
+    """Страница аптеки: карта, наличие лекарств, контакты."""
+    pharmacy = get_object_or_404(Pharmacy, pk=pk, is_active=True)
+
+    stocks = Stock.objects.filter(
+        pharmacy=pharmacy,
+        quantity__gt=0,
+    ).select_related('medicine', 'medicine__inn').order_by('medicine__name')
+
+    # Данные для карты — только нужные поля
+    pharmacy_data = {
+        'id': pharmacy.pk,
+        'name': pharmacy.name,
+        'address': pharmacy.address,
+        'phone': pharmacy.phone or '',
+        'latitude': pharmacy.latitude,
+        'longitude': pharmacy.longitude,
+        'is_24h': pharmacy.is_24h,
+    }
+
+    return render(request, 'main/pharmacy_detail.html', {
+        'pharmacy': pharmacy,
+        'pharmacy_data': pharmacy_data,
+        'stocks': stocks,
+    })

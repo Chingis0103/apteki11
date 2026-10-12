@@ -10,20 +10,28 @@
         <div class="row g-3">
             {% for pharmacy in pharmacies %}
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                {{ pharmacy.name }}
-                                {% if pharmacy.is_24h %}
-                                    <span class="badge bg-success">24/7</span>
+                    <a href="{% url 'main:pharmacy_detail' pharmacy.pk %}"
+                       class="text-decoration-none text-dark">
+                        <div class="card h-100 shadow-sm pharmacy-card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ pharmacy.name }}
+                                    {% if pharmacy.is_24h %}
+                                        <span class="badge bg-success">24/7</span>
+                                    {% endif %}
+                                </h5>
+                                <p class="card-text text-muted mb-2">📍 {{ pharmacy.address }}</p>
+                                {% if pharmacy.phone %}
+                                    <p class="card-text mb-2">📞 {{ pharmacy.phone }}</p>
                                 {% endif %}
-                            </h5>
-                            <p class="card-text text-muted mb-2">📍 {{ pharmacy.address }}</p>
-                            {% if pharmacy.phone %}
-                                <p class="card-text mb-2">📞 {{ pharmacy.phone }}</p>
-                            {% endif %}
+                                <p class="card-text mb-0">
+                                    <small class="text-primary">
+                                        Подробнее →
+                                    </small>
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             {% endfor %}
         </div>

@@ -73,3 +73,14 @@ footer {
     font-size: 0.82rem;
     color: #6c757d;
 }
+
+/* Карточка аптеки — hover-эффект */
+.pharmacy-card {
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+}
+
+.pharmacy-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}
