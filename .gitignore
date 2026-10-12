@@ -1,8 +1,39 @@
-venv/
+# Python
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# Виртуальное окружение
+venv/
+env/
+ENV/
+
+# Django
 db.sqlite3
+db.sqlite3-journal
 *.log
-media/
+local_settings.py
+
+# Секреты
+.env
+
+# Статика и медиа
 staticfiles/
+media/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Разное
+geocode_result.json
+go.bat
