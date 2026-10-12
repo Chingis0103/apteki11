@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm, LoginForm, ProfileForm, ReservationForm
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
+from .forms import RegisterForm, LoginForm, ProfileForm, ReservationForm, StockForm, AddStockForm
 from .models import Pharmacy, Medicine, Stock, Reservation
 
 
@@ -136,10 +137,6 @@ def profile(request):
     })
 
 
-from django.utils import timezone
-from .forms import ReservationForm
-
-
 # Максимум активных броней у одного пользователя
 MAX_ACTIVE_RESERVATIONS = 5
 
@@ -232,14 +229,16 @@ def cancel_reservation(request, pk):
 
 @login_required
 def pharmacist_panel(request):
-    """Панель фармацевта: заявки в его аптеке."""
+    """Панель фармацевта: заявки + управление наличием."""
     profile = request.user.profile
 
     if profile.role != 'pharmacist' or not profile.pharmacy:
         messages.error(request, 'Доступ только для фармацевтов с привязанной аптекой.')
         return redirect('main:index')
 
-    # Фильтр по статусу
+    tab = request.GET.get('tab', 'reservations')  # reservations | stock
+
+    # --- Заявки ---
     status_filter = request.GET.get('status', '')
     reservations = Reservation.objects.filter(
         stock__pharmacy=profile.pharmacy
@@ -249,7 +248,7 @@ def pharmacist_panel(request):
         reservations = reservations.filter(status=status_filter)
 
     # Обработка смены статуса
-    if request.method == 'POST':
+    if request.method == 'POST' and 'reservation_id' in request.POST:
         reservation_id = request.POST.get('reservation_id')
         new_status = request.POST.get('new_status')
         reservation = get_object_or_404(
@@ -263,16 +262,70 @@ def pharmacist_panel(request):
                 f'Статус заявки #{reservation.pk} изменён на '
                 f'«{reservation.get_status_display()}».'
             )
-        return redirect('main:pharmacist_panel')
+        return redirect(f"{request.path}?tab=reservations")
+
+    # --- Наличие ---
+    stocks = Stock.objects.filter(
+        pharmacy=profile.pharmacy
+    ).select_related('medicine', 'medicine__inn').order_by('medicine__name')
 
     return render(request, 'main/pharmacist_panel.html', {
+        'tab': tab,
         'reservations': reservations,
+        'stocks': stocks,
         'status_filter': status_filter,
         'statuses': Reservation.STATUS_CHOICES,
         'pharmacy': profile.pharmacy,
     })
 
-from django.http import JsonResponse
+
+@login_required
+def edit_stock(request, pk):
+    """Редактирование наличия (цена + количество)."""
+    profile = request.user.profile
+    if profile.role != 'pharmacist' or not profile.pharmacy:
+        messages.error(request, 'Доступ запрещён.')
+        return redirect('main:index')
+
+    stock = get_object_or_404(Stock, pk=pk, pharmacy=profile.pharmacy)
+
+    if request.method == 'POST':
+        form = StockForm(request.POST, instance=stock)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Наличие «{stock.medicine.name}» обновлено.')
+            return redirect(f"{reverse('main:pharmacist_panel')}?tab=stock")
+    else:
+        form = StockForm(instance=stock)
+
+    return render(request, 'main/edit_stock.html', {
+        'form': form,
+        'stock': stock,
+    })
+
+
+@login_required
+def add_stock(request):
+    """Добавление нового лекарства в аптеку."""
+    profile = request.user.profile
+    if profile.role != 'pharmacist' or not profile.pharmacy:
+        messages.error(request, 'Доступ запрещён.')
+        return redirect('main:index')
+
+    if request.method == 'POST':
+        form = AddStockForm(request.POST, pharmacy=profile.pharmacy)
+        if form.is_valid():
+            stock = form.save(commit=False)
+            stock.pharmacy = profile.pharmacy
+            stock.save()
+            messages.success(request, f'«{stock.medicine.name}» добавлено в наличие.')
+            return redirect('main:pharmacist_panel')
+    else:
+        form = AddStockForm(pharmacy=profile.pharmacy)
+
+    return render(request, 'main/add_stock.html', {
+        'form': form,
+    })
 
 
 def api_search_medicines(request):

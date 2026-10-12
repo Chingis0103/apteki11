@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Profile, Reservation
+from .models import Profile, Reservation, Stock, Medicine
 
 
 class RegisterForm(UserCreationForm):
@@ -140,3 +140,57 @@ class ReservationForm(forms.ModelForm):
         if quantity < 1:
             raise forms.ValidationError('Количество должно быть не менее 1.')
         return quantity
+
+
+class StockForm(forms.ModelForm):
+    """Форма редактирования наличия (цена + количество)."""
+    class Meta:
+        model = Stock
+        fields = ('price', 'quantity')
+        widgets = {
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control form-control-sm',
+                'step': '0.01',
+                'min': '0',
+            }),
+            'quantity': forms.NumberInput(attrs={
+                'class': 'form-control form-control-sm',
+                'min': '0',
+            }),
+        }
+        labels = {
+            'price': 'Цена, ₽',
+            'quantity': 'Кол-во',
+        }
+
+
+class AddStockForm(forms.ModelForm):
+    """Форма добавления нового лекарства в аптеку."""
+    class Meta:
+        model = Stock
+        fields = ('medicine', 'price', 'quantity')
+        widgets = {
+            'medicine': forms.Select(attrs={'class': 'form-select'}),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0',
+            }),
+            'quantity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+            }),
+        }
+        labels = {
+            'medicine': 'Лекарство',
+            'price': 'Цена, ₽',
+            'quantity': 'Количество',
+        }
+
+    def __init__(self, *args, pharmacy=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pharmacy = pharmacy
+        if pharmacy:
+            # Исключаем лекарства, которые уже есть в аптеке
+            existing = Stock.objects.filter(pharmacy=pharmacy).values_list('medicine_id', flat=True)
+            self.fields['medicine'].queryset = Medicine.objects.exclude(pk__in=existing).select_related('inn')

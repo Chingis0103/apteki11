@@ -28,4 +28,7 @@ urlpatterns = [
 
     # Детали аптек
     path('pharmacy/<int:pk>/', views.pharmacy_detail, name='pharmacy_detail'),
+
+    path('pharmacist/stock/<int:pk>/edit/', views.edit_stock, name='edit_stock'),
+    path('pharmacist/stock/add/', views.add_stock, name='add_stock'),
 ]
