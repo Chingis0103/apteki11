@@ -1,6 +1,40 @@
 from django.contrib import admin
+from django.contrib.admin.models import LogEntry
 from .models import INN, Pharmacy, Medicine, Stock, Reservation, Profile
 
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    """Журнал действий администраторов и фармацевтов."""
+    list_display = ('action_time', 'user', 'content_type', 'object_repr', 'action_flag')
+    list_filter = ('action_time', 'user', 'content_type', 'action_flag')
+    search_fields = ('object_repr', 'change_message')
+    readonly_fields = (
+        'action_time', 'user', 'content_type', 'object_id',
+        'object_repr', 'action_flag', 'change_message'
+    )
+    ordering = ('-action_time',)
+
+    @admin.display(description='Действие')
+    def action_flag_display(self, obj):
+        flags = {
+            1: '➕ Добавление',
+            2: '✏️ Изменение',
+            3: '❌ Удаление',
+        }
+        return flags.get(obj.action_flag, '—')
+    
+    def has_add_permission(self, request):
+        return False  # нельзя вручную создавать записи
+
+    def has_change_permission(self, request, obj=None):
+        return False  # нельзя редактировать
+
+    def has_delete_permission(self, request, obj=None):
+        return False  # нельзя удалять (для аудита)
+
+    class Meta:
+        verbose_name = 'Запись журнала'
+        verbose_name_plural = 'Журнал действий'
 
 @admin.register(INN)
 class INNAdmin(admin.ModelAdmin):
